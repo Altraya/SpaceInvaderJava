@@ -9,10 +9,10 @@ import java.awt.Color;
 import spaceinvadersproject.GUI.MainMenuFrame;
 
 /**
- *
+ * A space invader in java, with custom rules
  * @author Karakayn
  */
-public class SpaceInvadersProject {
+public class Main {
 
     /**
      * @param args the command line arguments

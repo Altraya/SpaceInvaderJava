@@ -14,12 +14,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 /**
- *
+ * Panel who load an image
  * @author Karakayn
  */
 public class JImagePanel extends javax.swing.JPanel {
 
-    private BufferedImage image;
+    private BufferedImage picture;
     
     /**
      * Creates new form JImagePanel
@@ -27,6 +27,11 @@ public class JImagePanel extends javax.swing.JPanel {
     public JImagePanel() {
         initComponents();
         setImage("ressources/Accueil.png");
+    }
+    
+    public JImagePanel(String path) {
+        initComponents();
+        setImage(path);
     }
 
     /**
@@ -57,8 +62,8 @@ public class JImagePanel extends javax.swing.JPanel {
     public void setImage(String pathAndName)
     {
         try {                
-          image = ImageIO.read(new File(pathAndName));
-          JLabel wIcon = new JLabel(new ImageIcon(image));
+          picture = ImageIO.read(new File(pathAndName));
+          JLabel wIcon = new JLabel(new ImageIcon(picture));
         } catch (IOException ex) {
              JLabel wIcon = new JLabel("Pas d'image");
         }
@@ -67,7 +72,7 @@ public class JImagePanel extends javax.swing.JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(image, 0, 0, this); // see javadoc for more info on the parameters            
+        g.drawImage(picture, 0, 0, this); // see javadoc for more info on the parameters            
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

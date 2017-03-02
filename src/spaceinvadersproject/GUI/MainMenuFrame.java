@@ -7,22 +7,35 @@ package spaceinvadersproject.GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import javax.swing.JFrame;
 
 /**
- *
+ * Frame who display the main menu
  * @author Karakayn
  */
 public class MainMenuFrame extends javax.swing.JFrame {
 
+    private static final String TEXT_START_GAME = "Commencer la partie";
+    private static final String TEXT_OPTIONS = "Options";
+    private static final String TEXT_LEAVE_GAME = "Quitter la partie";
+    
     private JImagePanel imagePanel;
+    private javax.swing.JLabel selectedMenuComponent;
 
     /**
      * Creates new form MainMenuFrame
      */
     public MainMenuFrame() {
         initComponents();
+        //make the first menu item selected
+        selectedMenuComponent = jLabelStartGame;
+        String textToSet = addChevronSelected(TEXT_START_GAME);
+        jLabelStartGame.setText(textToSet); // > Commencer la partie <
         
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH); //fullscreen mode
+
         //add the real panel object to our positioning jPanel
         imagePanel = new spaceinvadersproject.GUI.JImagePanel();
         jPanelToReplaceByImageTop.setLayout(new BorderLayout());
@@ -35,6 +48,11 @@ public class MainMenuFrame extends javax.swing.JFrame {
         imagePanel.setBackground(Color.BLACK);
     }
 
+    private String addChevronSelected(String textToTransform)
+    {
+        return "> "+textToTransform+" <";
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -44,53 +62,105 @@ public class MainMenuFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButtonStartGame = new javax.swing.JButton();
-        jButtonLeave = new javax.swing.JButton();
-        jPanelToReplaceByImageTop = new javax.swing.JPanel();
         jPanelToReplaceByImageBottom = new javax.swing.JPanel();
+        jPanelToReplaceByImageTop = new javax.swing.JPanel();
+        jLabelGameTitle = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabelStartGame = new javax.swing.JLabel();
+        jLabelOptions = new javax.swing.JLabel();
+        jLabelLeaveGame = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Space Invaders Project");
         setBackground(new java.awt.Color(0, 0, 0));
+        setForeground(java.awt.Color.black);
         setMinimumSize(new java.awt.Dimension(800, 600));
         setName("Space Invader Project"); // NOI18N
-
-        jButtonStartGame.setText("Lancer la partie");
-        jButtonStartGame.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonStartGameActionPerformed(evt);
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                formMouseClicked(evt);
+            }
+        });
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                formKeyReleased(evt);
             }
         });
 
-        jButtonLeave.setText("Quitter le jeu");
-        jButtonLeave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonLeaveActionPerformed(evt);
-            }
-        });
-
-        jPanelToReplaceByImageTop.setMinimumSize(new java.awt.Dimension(800, 100));
+        javax.swing.GroupLayout jPanelToReplaceByImageBottomLayout = new javax.swing.GroupLayout(jPanelToReplaceByImageBottom);
+        jPanelToReplaceByImageBottom.setLayout(jPanelToReplaceByImageBottomLayout);
+        jPanelToReplaceByImageBottomLayout.setHorizontalGroup(
+            jPanelToReplaceByImageBottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 790, Short.MAX_VALUE)
+        );
+        jPanelToReplaceByImageBottomLayout.setVerticalGroup(
+            jPanelToReplaceByImageBottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout jPanelToReplaceByImageTopLayout = new javax.swing.GroupLayout(jPanelToReplaceByImageTop);
         jPanelToReplaceByImageTop.setLayout(jPanelToReplaceByImageTopLayout);
         jPanelToReplaceByImageTopLayout.setHorizontalGroup(
             jPanelToReplaceByImageTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 790, Short.MAX_VALUE)
         );
         jPanelToReplaceByImageTopLayout.setVerticalGroup(
             jPanelToReplaceByImageTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 100, Short.MAX_VALUE)
         );
 
-        javax.swing.GroupLayout jPanelToReplaceByImageBottomLayout = new javax.swing.GroupLayout(jPanelToReplaceByImageBottom);
-        jPanelToReplaceByImageBottom.setLayout(jPanelToReplaceByImageBottomLayout);
-        jPanelToReplaceByImageBottomLayout.setHorizontalGroup(
-            jPanelToReplaceByImageBottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 800, Short.MAX_VALUE)
+        jLabelGameTitle.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 48)); // NOI18N
+        jLabelGameTitle.setForeground(java.awt.Color.lightGray);
+        jLabelGameTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelGameTitle.setText("Space Invader Project");
+
+        jPanel3.setBackground(new java.awt.Color(0, 0, 0));
+
+        jLabelStartGame.setBackground(new java.awt.Color(0, 0, 0));
+        jLabelStartGame.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 24)); // NOI18N
+        jLabelStartGame.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelStartGame.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelStartGame.setText("Commencer la partie");
+        jLabelStartGame.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelStartGameMouseClicked(evt);
+            }
+        });
+
+        jLabelOptions.setBackground(new java.awt.Color(0, 0, 0));
+        jLabelOptions.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 24)); // NOI18N
+        jLabelOptions.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelOptions.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelOptions.setText("Options");
+
+        jLabelLeaveGame.setBackground(new java.awt.Color(0, 0, 0));
+        jLabelLeaveGame.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 24)); // NOI18N
+        jLabelLeaveGame.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelLeaveGame.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelLeaveGame.setText("Quitter le jeu");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabelOptions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabelStartGame, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabelLeaveGame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
-        jPanelToReplaceByImageBottomLayout.setVerticalGroup(
-            jPanelToReplaceByImageBottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabelStartGame, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabelOptions, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabelLeaveGame, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -98,47 +168,107 @@ public class MainMenuFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jPanelToReplaceByImageBottom, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanelToReplaceByImageTop, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonStartGame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButtonLeave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabelGameTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanelToReplaceByImageBottom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jPanelToReplaceByImageTop, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(23, 23, 23)
                 .addComponent(jPanelToReplaceByImageTop, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(61, 61, 61)
-                .addComponent(jButtonStartGame, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
-                .addComponent(jButtonLeave, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(62, 62, 62)
-                .addComponent(jPanelToReplaceByImageBottom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabelGameTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanelToReplaceByImageBottom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonStartGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStartGameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButtonStartGameActionPerformed
+    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
 
-    private void jButtonLeaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLeaveActionPerformed
-        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+    }//GEN-LAST:event_formMouseClicked
 
-    }//GEN-LAST:event_jButtonLeaveActionPerformed
+    private void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
+        System.out.println("Key pressed main frame");
+        switch(evt.getKeyCode())
+        {
+            case KeyEvent.VK_DOWN:
+                if(selectedMenuComponent == jLabelStartGame)
+                {
+                    jLabelStartGame.setText(TEXT_START_GAME); //reini label
+                    //select the option label
+                    String textToSet = this.addChevronSelected(TEXT_OPTIONS);
+                    jLabelOptions.setText(textToSet);
+                    selectedMenuComponent = jLabelOptions;
+                }else if(selectedMenuComponent == jLabelOptions)
+                {
+                    jLabelOptions.setText(TEXT_OPTIONS); //reini label
+                    //select the option label
+                    String textToSet = this.addChevronSelected(TEXT_LEAVE_GAME);
+                    jLabelLeaveGame.setText(textToSet);
+                    selectedMenuComponent = jLabelLeaveGame;
+                }
+                //else we did nothing because we are at the end of the menu
+                break;
+            case KeyEvent.VK_UP:
+                if(selectedMenuComponent == jLabelLeaveGame)
+                {
+                    jLabelLeaveGame.setText(TEXT_LEAVE_GAME); //reini label
+                    //select the option label
+                    String textToSet = this.addChevronSelected(TEXT_OPTIONS);
+                    jLabelOptions.setText(textToSet);
+                    selectedMenuComponent = jLabelOptions;
+                }else if(selectedMenuComponent == jLabelOptions)
+                {
+                    jLabelOptions.setText(TEXT_OPTIONS); //reini label
+                    //select the option label
+                    String textToSet = this.addChevronSelected(TEXT_START_GAME);
+                    jLabelStartGame.setText(textToSet);
+                    selectedMenuComponent = jLabelStartGame;
+                }
+                //else we are on the top of the list and we do nothing
+                break;
+            case KeyEvent.VK_ENTER:
+                if(selectedMenuComponent.getText().equals(addChevronSelected(TEXT_START_GAME)))
+                {
+                    this.setVisible(false); //just want to make it disapear from the string but we need informations
+                    GameFrame mf = new GameFrame();
+                    mf.setVisible(true);
+
+                }
+                else if(selectedMenuComponent.getText().equals(addChevronSelected(TEXT_OPTIONS)))
+                {
+                    System.out.println("TODO No options yet");
+                }
+                else if(selectedMenuComponent.getText().equals(addChevronSelected(TEXT_LEAVE_GAME)))
+                {
+                    this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+                }
+        }
+    }//GEN-LAST:event_formKeyReleased
+
+    private void jLabelStartGameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelStartGameMouseClicked
+        
+    }//GEN-LAST:event_jLabelStartGameMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonLeave;
-    private javax.swing.JButton jButtonStartGame;
+    private javax.swing.JLabel jLabelGameTitle;
+    private javax.swing.JLabel jLabelLeaveGame;
+    private javax.swing.JLabel jLabelOptions;
+    private javax.swing.JLabel jLabelStartGame;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanelToReplaceByImageBottom;
     private javax.swing.JPanel jPanelToReplaceByImageTop;
     // End of variables declaration//GEN-END:variables
