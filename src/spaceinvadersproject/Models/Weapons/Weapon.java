@@ -5,6 +5,7 @@
  */
 package spaceinvadersproject.Models.Weapons;
 
+import java.awt.image.BufferedImage;
 import java.util.Random;
 
 /**

@@ -10,10 +10,8 @@ import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import javax.swing.JComponent;
 import spaceinvadersproject.Models.Enemies.Enemy;
+import spaceinvadersproject.Models.Entity;
 import spaceinvadersproject.Models.Player.Player;
 import spaceinvadersproject.SpaceInvaderGame;
 import spaceinvadersproject.SpaceInvaderGame.ECote;
@@ -22,7 +20,7 @@ import spaceinvadersproject.SpaceInvaderGame.ECote;
  * Représente the screen of the game
  * @author Karakayn
  */
-public class GameScreenPanel extends javax.swing.JPanel {
+public class GameScreenPanel extends javax.swing.JPanel{
     private static Frame f;
     
     /**
@@ -31,8 +29,11 @@ public class GameScreenPanel extends javax.swing.JPanel {
     public GameScreenPanel(Frame frame) {
         f = frame;
         initComponents();
+        setIgnoreRepaint(true);
+        
         SpaceInvaderGame.getInstance().initGame();
         this.setBackground(Color.BLACK);
+
         this.setFocusable(true);
         this.requestFocusInWindow();
 
@@ -47,7 +48,7 @@ public class GameScreenPanel extends javax.swing.JPanel {
     public void initAircraftPosition()
     {
         SpaceInvaderGame.getInstance().getPlayer().getAircraft().setX(this.getSize().width/2);
-        SpaceInvaderGame.getInstance().getPlayer().getAircraft().setY(this.getSize().height-130);
+        SpaceInvaderGame.getInstance().getPlayer().getAircraft().setY(this.getSize().height-129);
     }
 
     /**
@@ -88,7 +89,7 @@ public class GameScreenPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_formComponentResized
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
-        System.out.println("Key pressed");
+        
         switch(evt.getKeyCode())
         {
             case KeyEvent.VK_LEFT:
@@ -113,45 +114,12 @@ public class GameScreenPanel extends javax.swing.JPanel {
         g2d.fillRect(0, this.getSize().height-60, this.getSize().width, 2);
     }
     
-    /**
-     * Draw an enemy to the specified canvas
-     * @param g : canvas
-     * @param enemy : enemy to draw
-     */
-    private void drawEnemy(Graphics g, Enemy enemy)
-    {        
-        g.drawImage(enemy.getAircraft().getPicture(), enemy.getAircraft().getX(), enemy.getAircraft().getY(), this);
-    }
-    
-    /**
-     * Draw enemies in the specified canvas
-     * @param g : canvas
-     * @param enemies : enemies to draw
-     */
-    private void drawEnemies(Graphics g, ArrayList<Enemy> enemies)
-    {
-        for (Enemy next : enemies) {
-            //draw current ennemy
-            drawEnemy(g, next);
-        }
-    }
-    
-    /**
-     * Draw player in the specified canvas
-     * @param g : canvas
-     * @param player : player to draw
-     */
-    private void drawPlayer(Graphics g, Player player)
-    {
-        g.drawImage(player.getAircraft().getPicture(), player.getAircraft().getX(), player.getAircraft().getY(), this);
-    }
-    
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         //draw the ground
         drawBaseGround(g, Color.white);
-        
+        /*
         if(SpaceInvaderGame.getInstance().getEnemies() != null)
         {
             //draw enemies
@@ -165,8 +133,118 @@ public class GameScreenPanel extends javax.swing.JPanel {
             //draw player
             drawPlayer(g, SpaceInvaderGame.getInstance().getPlayer());   
         }
+*/
 
+    }
+    
+    /**
+    * The main game loop. This loop is running during all game
+    * play as is responsible for the following activities:
+    * <p>
+    * - Working out the speed of the game loop to update moves
+    * - Moving the game entities
+    * - Drawing the screen contents (entities, text)
+    * - Updating game events
+    * - Checking Input
+    * <p>
+    */
+    public void gameLoop(Graphics g) {
+        long lastLoopTime = System.currentTimeMillis();
+        // keep looping round til the game ends
+        while (SpaceInvaderGame.getInstance().isGameRunning()) {
+            // work out how long its been since the last update, this
+            // will be used to calculate how far the entities should
+            // move this loop
+            long delta = System.currentTimeMillis() - lastLoopTime;
+            lastLoopTime = System.currentTimeMillis();
 
+            // Get hold of a graphics context for the accelerated 
+            // surface and blank it out
+            //TODO
+            //Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
+            //g.setColor(Color.black);
+            //g.fillRect(0,0,800,600);
+
+            // cycle round asking each entity to move itself
+            if (!SpaceInvaderGame.getInstance().isWaitingForKeyPress()) {
+                for (int i=0;i<SpaceInvaderGame.getInstance().getEntities().size();i++) {
+                    Enemy enemy = (Enemy) SpaceInvaderGame.getInstance().getEntities().get(i);
+                    enemy.move(delta);
+                }
+            }
+
+            // cycle round drawing all the entities we have in the game
+            for (int i=0;i<SpaceInvaderGame.getInstance().getEntities().size();i++) {
+                Enemy enemy = (Enemy) SpaceInvaderGame.getInstance().getEntities().get(i);
+                enemy.draw(g);
+            }
+
+            // brute force collisions, compare every entity against
+            // every other entity. If any of them collide notify 
+            // both entities that the collision has occured
+            for (int p=0;p<SpaceInvaderGame.getInstance().getEntities().size();p++) {
+                for (int s=p+1;s<SpaceInvaderGame.getInstance().getEntities().size();s++) {
+                    Enemy me = (Enemy) SpaceInvaderGame.getInstance().getEntities().get(p);
+                    Enemy him = (Enemy) SpaceInvaderGame.getInstance().getEntities().get(s);
+
+                    if (me.collidesWith(him)) {
+                        me.collidedWith(him);
+                        him.collidedWith(me);
+                    }
+                }
+            }
+
+            // remove any entity that has been marked for clear up
+            SpaceInvaderGame.getInstance().getEntities().removeAll(SpaceInvaderGame.getInstance().getRemoveList());
+            SpaceInvaderGame.getInstance().getRemoveList().clear();
+
+            // if a game event has indicated that game logic should
+            // be resolved, cycle round every entity requesting that
+            // their personal logic should be considered.
+            if (SpaceInvaderGame.getInstance().isLogicRequiredThisLoop()) {
+                    for (int i=0;i<SpaceInvaderGame.getInstance().getEntities().size();i++) {
+                        Entity entity = (Entity) SpaceInvaderGame.getInstance().getEntities().get(i);
+                        entity.doLogic();
+                    }
+                    SpaceInvaderGame.getInstance().getPlayer().doLogic();
+                    SpaceInvaderGame.getInstance().setLogicRequiredThisLoop(false);
+            }
+
+            // if we're waiting for an "any key" press then draw the 
+            // current message 
+            if (SpaceInvaderGame.getInstance().isWaitingForKeyPress()) {
+                    g.setColor(Color.white);
+                    g.drawString(SpaceInvaderGame.getInstance().getMessage(),(800-g.getFontMetrics().stringWidth(SpaceInvaderGame.getInstance().getMessage()))/2,250);
+                    g.drawString("Press any key",(800-g.getFontMetrics().stringWidth("Press any key"))/2,300);
+            }
+
+            // finally, we've completed drawing so clear up the graphics
+            // and flip the buffer over
+            g.dispose();
+            //strategy.show(); TODO
+
+            // resolve the movement of the ship. First assume the ship 
+            // isn't moving. If either cursor key is pressed then
+            // update the movement appropraitely
+            SpaceInvaderGame.getInstance().getPlayer().setHorizontalMovement(0);
+
+            if ((SpaceInvaderGame.getInstance().isLeftPressed()) && (!SpaceInvaderGame.getInstance().isRightPressed())) {
+                SpaceInvaderGame.getInstance().getPlayer().setHorizontalMovement(-SpaceInvaderGame.getInstance().getPlayer().getAircraft().getMoveSpeed());
+            } else if ((SpaceInvaderGame.getInstance().isRightPressed()) && (!SpaceInvaderGame.getInstance().isLeftPressed())) {
+                SpaceInvaderGame.getInstance().getPlayer().setHorizontalMovement(SpaceInvaderGame.getInstance().getPlayer().getAircraft().getMoveSpeed());
+            }
+
+            // if we're pressing fire, attempt to fire
+            if (SpaceInvaderGame.getInstance().isFirePressed()) {
+                SpaceInvaderGame.getInstance().tryToFire();
+            }
+
+            // finally pause for a bit. Note: this should run us at about
+            // 100 fps but on windows this might vary each loop due to
+            // a bad implementation of timer
+
+            try { Thread.sleep(10); } catch (Exception e) {}
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

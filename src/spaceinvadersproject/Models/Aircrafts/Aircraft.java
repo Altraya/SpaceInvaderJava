@@ -5,7 +5,6 @@
  */
 package spaceinvadersproject.Models.Aircrafts;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import spaceinvadersproject.Models.Weapons.Weapon;
 import spaceinvadersproject.SpaceInvaderGame.ECote;
@@ -22,16 +21,18 @@ public abstract class Aircraft {
     protected boolean _destroyed;
     protected ArrayList<Weapon> _listEquipedWeapons = new ArrayList<>();
     
-    protected BufferedImage _picture;
     protected int _x;
     protected int _y;
-    
+    /** The speed at which the player's ship should move (pixels/sec) */
+    private double moveSpeed;
+        
     public Aircraft()
     {
         this._maxStructPoint = 0;
         this._maxShieldPoint = 0;
         this._currentShieldPoint = _maxShieldPoint;
         this._currentStructPoint = _maxStructPoint;
+        moveSpeed = 300;
         this._destroyed = false;
     }
     public Aircraft(int ptsStructMax, int ptsBouclier)
@@ -138,19 +139,6 @@ public abstract class Aircraft {
         this._listEquipedWeapons = _listEquipedWeapons;
     }
 
-    /**
-     * @return the _picture
-     */
-    public BufferedImage getPicture() {
-        return _picture;
-    }
-
-    /**
-     * @param picture the _picture to set
-     */
-    public void setPicture(BufferedImage picture) {
-        this._picture = picture;
-    }
 
     /**
      * @return the _x
@@ -178,5 +166,19 @@ public abstract class Aircraft {
      */
     public void setY(int y) {
         this._y = y;
+    }
+
+    /**
+     * @return the moveSpeed
+     */
+    public double getMoveSpeed() {
+        return moveSpeed;
+    }
+
+    /**
+     * @param moveSpeed the moveSpeed to set
+     */
+    public void setMoveSpeed(double moveSpeed) {
+        this.moveSpeed = moveSpeed;
     }
 }

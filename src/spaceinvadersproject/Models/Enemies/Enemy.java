@@ -6,12 +6,13 @@
 package spaceinvadersproject.Models.Enemies;
 
 import spaceinvadersproject.Models.Aircrafts.Aircraft;
+import spaceinvadersproject.Models.Entity;
 
 /**
  * Represent an abstract enemy
  * @author Karakayn
  */
-public class Enemy {
+public abstract class Enemy extends Entity{
     
     //Name of enemy
     protected String name;
@@ -19,15 +20,14 @@ public class Enemy {
     protected String affixe;
     protected Aircraft aircraft;
 
+    public Enemy(String ref, int x, int y) {
+        super(ref, x, y);
+    }
+
     //Type of enemy Boss / Creep / or other specific type
     public enum EType{ 
         Creep,
         Boss
-    }
-    
-    public Enemy()
-    {
-        
     }
 
     /**

@@ -200,7 +200,7 @@ public class MainMenuFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_formMouseClicked
 
     private void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
-        System.out.println("Key pressed main frame");
+       
         switch(evt.getKeyCode())
         {
             case KeyEvent.VK_DOWN:
