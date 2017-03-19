@@ -58,14 +58,13 @@ public class SpriteStore {
             // from the appropriate place, this helps with deploying the game
             // with things like webstart. You could equally do a file look
             // up here.
-            /*URL url = this.getClass().getClassLoader().getResource(ref);
-            */File url = new File(ref);
-            /*if (url == null) {
+            URL url = this.getClass().getClassLoader().getResource(ref);
+            //File url = new File(ref);
+            if (url == null) {
                 fail("Can't find ref: "+ref);
             }
             
             // use ImageIO to read the image in
-            sourceImage = ImageIO.read(url);*/
             sourceImage = ImageIO.read(url);
         } catch (IOException e) {
             fail("Failed to load: "+ref);

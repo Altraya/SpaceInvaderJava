@@ -31,7 +31,7 @@ public abstract class Entity {
     private Rectangle him = new Rectangle();
 
     public Entity() {
-        this.sprite = SpriteStore.get().getSprite("ressources/defaultPlayer.png");
+        this.sprite = SpriteStore.get().getSprite("sprites/defaultPlayer.png");
         this.x = 0;
         this.y = 0;
     }

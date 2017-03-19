@@ -49,7 +49,7 @@ public class Level {
             {
                 int maxStructPoint = ini.getInt("Enemy_"+_currentLevelName, "maxStructPoint", 0);
                 int maxShieldPoint = ini.getInt("Enemy_"+_currentLevelName, "maxShieldPoint", 0);
-                String pictureUrl = ini.getString("Enemy_"+_currentLevelName, "picture", "ressources/miniSlt.png");
+                String pictureUrl = ini.getString("Enemy_"+_currentLevelName, "picture", "sprites/miniSI_pink.png");
                 String type = ini.getString("Enemy_"+_currentLevelName, "type", "SpaceInvader");
                 try {
                     Class enemyClass = Class.forName(type); //exemple : SpaceInvader class

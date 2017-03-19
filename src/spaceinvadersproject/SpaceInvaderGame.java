@@ -100,7 +100,7 @@ public class SpaceInvaderGame {
         setEnnemyCount(0);
         for (int row=0;row<5;row++) {
             for (int x=0;x<12;x++) {
-                Entity currentEnemy = new SpaceInvader("ressources/miniSIt.png",100+(x*50),(50)+row*30);
+                Entity currentEnemy = new SpaceInvader("sprites/miniSI_pink.png",100+(x*50),(50)+row*30);
                 entities.add(currentEnemy);
                 setEnnemyCount(getEnnemyCount() + 1);
             }
@@ -132,7 +132,7 @@ public class SpaceInvaderGame {
             format.put("playerName", ini.getString("Player", "name", "DefaultPlayerName"));
             format.put("playerFirstname", ini.getString("Player", "firstname", "DefaultPlayerFirstName"));
             format.put("playerNickname", ini.getString("Player", "nickname", "DefaultNickName#Kevin"));
-            format.put("playerPicturePath", ini.getString("Player", "picturepath", "ressources/defaultPlayer.png"));            
+            format.put("playerPicturePath", ini.getString("Player", "picturepath", "sprites/defaultPlayer.png"));            
             return format;
         } catch (IOException ex) {
             Logger.getLogger(SpaceInvaderGame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -156,7 +156,7 @@ public class SpaceInvaderGame {
 
         // if we waited long enough, create the shot entity, and record the time.
         lastFire = System.currentTimeMillis();
-        ShotEntity shot = new ShotEntity("ressources/shot.png",this.player.getAircraft().getX()+10,this.player.getAircraft().getY()-30);
+        ShotEntity shot = new ShotEntity("sprites/shot.gif",this.player.getAircraft().getX()+10,this.player.getAircraft().getY()-30);
         entities.add(shot);
     }
     
