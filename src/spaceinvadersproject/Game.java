@@ -34,6 +34,10 @@ import spaceinvadersproject.Models.ShotEntity;
  * 
  */
 public class Game extends Canvas {
+    public enum ECote {
+        LEFT,
+        RIGHT
+    }
     /** The stragey that allows us to use accelerate page flipping */
     private BufferStrategy strategy;
     /** True if the game is currently "running", i.e. the game loop is looping */
@@ -49,7 +53,7 @@ public class Game extends Canvas {
     /** The time at which last fired a shot */
     private long lastFire = 0;
     // The interval between our players shot (ms)
-    private long firingInterval = 500;
+    private long firingInterval = 200;
     // The number of enemy left on the screen
     private int enemyCount;
 
@@ -66,30 +70,56 @@ public class Game extends Canvas {
     /** True if game logic needs to be applied this loop, normally as a result of a game event */
     private boolean logicRequiredThisLoop = false;
 
-    private int height = 0;
-    private int width = 0;
+    private int maxScreenHeight = 0;
+    private int maxScreenWidth = 0;
+   
+    // Singleton
+    private static Game INSTANCE = null;
+    
+    public static Game getInstance()
+    {			
+        if (INSTANCE == null)
+        { 	
+            INSTANCE = new Game();
+        }
+        return INSTANCE;
+    }
+
+    /**
+     * @return the maxScreenHeight
+     */
+    public int getMaxScreenHeight() {
+        return maxScreenHeight;
+    }
+
+    /**
+     * @return the maxScreenWidth
+     */
+    public int getMaxScreenWidth() {
+        return maxScreenWidth;
+    }
     
     /**
      * Construct our game and set it running.
      */
-    public Game() {
+    private Game() {
         // create a frame to contain our game
         JFrame container = new JFrame("Space Invaders Game");
         container.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         container.setUndecorated(true);
         container.setVisible(true); //to make maximized work
-        container.setVisible(false);
+        //container.setVisible(false);
         
-        this.width = container.getBounds().width;
-        this.height = container.getBounds().height;
+        this.maxScreenWidth = container.getBounds().width;
+        this.maxScreenHeight = container.getBounds().height;
         
         // get hold the content of the frame and set up the resolution of the game
         JPanel panel = (JPanel) container.getContentPane();
-        panel.setPreferredSize(new Dimension(this.width, this.height));
+        panel.setPreferredSize(new Dimension(this.maxScreenWidth, this.maxScreenHeight));
         panel.setLayout(null);
 
         // setup our canvas size and put it into the content of the frame
-        setBounds(0,0, this.width, this.height);
+        setBounds(0,0, this.maxScreenWidth, this.maxScreenHeight);
         panel.add(this);
 
         // Tell AWT not to bother repainting our canvas since we're
@@ -146,15 +176,21 @@ public class Game extends Canvas {
      * entitiy will be added to the overall list of entities in the game.
      */
     private void initEntities() {
+        int marginLeft = this.getMaxScreenWidth()/6;
+        int marginTop = this.getMaxScreenHeight()/6;
+        int widthSprite = 100;
+        int heightSprite = 73;
+        int maxRow = 5;
+        int maxEnemyByRow = 12;
         // create the player ship and place it roughly in the center of the screen
-        player = new Player("sprites/defaultPlayer.png",370,550, "PlayerFirstname", "NamePlayer", "Poney");
+        player = new Player("sprites/defaultPlayer.png",this.getMaxScreenWidth()/2,this.getMaxScreenHeight()-70, "PlayerFirstname", "NamePlayer", "Poney");
         entities.add(player);
 
         // create a block of aliens (5 rows, by 12 aliens, spaced evenly)
         enemyCount = 0;
-        for (int row=0;row<5;row++) {
-            for (int x=0;x<12;x++) {
-                Entity spaceInv = new SpaceInvader("sprites/miniSI_pink.png",100+(x*50),(73)+row*30);
+        for (int row=0;row<maxRow;row++) {
+            for (int x=0;x<maxEnemyByRow;x++) {
+                Entity spaceInv = new SpaceInvader("sprites/miniSI_pink.png",marginLeft+(x*widthSprite),(marginTop)+row*heightSprite);
                 entities.add(spaceInv);
                 enemyCount++;
             }
@@ -200,7 +236,7 @@ public class Game extends Canvas {
     /**
      * Notification that an alien has been killed
      */
-    public void notifyAlienKilled() {
+    public void notifyEnemyKilled() {
         // reduce the alient count, if there are none left, the player has won!
         enemyCount--;
 
@@ -263,7 +299,7 @@ public class Game extends Canvas {
             // surface and blank it out
             Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
             g.setColor(Color.black);
-            g.fillRect(0,0,this.width, this.height);
+            g.fillRect(0,0, this.getMaxScreenWidth(), this.getMaxScreenHeight());
 
             // cycle round asking each entity to move itself
             if (!waitingForKeyPress) {
@@ -314,8 +350,8 @@ public class Game extends Canvas {
             // current message 
             if (waitingForKeyPress) {
                 g.setColor(Color.white);
-                g.drawString(message,(this.width-g.getFontMetrics().stringWidth(message))/2,250);
-                g.drawString("Press any key",(this.width-g.getFontMetrics().stringWidth("Press any key"))/2,300);
+                g.drawString(message,(this.getMaxScreenWidth()-g.getFontMetrics().stringWidth(message))/2,250);
+                g.drawString("Press any key",(this.getMaxScreenWidth()-g.getFontMetrics().stringWidth("Press any key"))/2,300);
             }
 
             // finally, we've completed drawing so clear up the graphics
@@ -367,6 +403,7 @@ public class Game extends Canvas {
          *
          * @param e The details of the key that was pressed 
          */
+        @Override
         public void keyPressed(KeyEvent e) {
             // if we're waiting for an "any key" typed then we don't 
             // want to do anything with just a "press"
@@ -390,6 +427,7 @@ public class Game extends Canvas {
          *
          * @param e The details of the key that was released 
          */
+        @Override
         public void keyReleased(KeyEvent e) {
             // if we're waiting for an "any key" typed then we don't 
             // want to do anything with just a "released"
@@ -414,6 +452,7 @@ public class Game extends Canvas {
          *
          * @param e The details of the key that was typed. 
          */
+        @Override
         public void keyTyped(KeyEvent e) {
             // if we're waiting for a "any key" type then
             // check if we've recieved any recently. We may

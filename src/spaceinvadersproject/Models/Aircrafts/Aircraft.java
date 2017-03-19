@@ -7,7 +7,7 @@ package spaceinvadersproject.Models.Aircrafts;
 
 import java.util.ArrayList;
 import spaceinvadersproject.Models.Weapons.Weapon;
-import spaceinvadersproject.SpaceInvaderGame.ECote;
+import spaceinvadersproject.Game.ECote;
 
 /**
  * Represent an abstrat aircraft

@@ -5,8 +5,8 @@
  */
 package spaceinvadersproject.Models.Enemies;
 
+import spaceinvadersproject.Game;
 import spaceinvadersproject.Models.Entity;
-import spaceinvadersproject.SpaceInvaderGame;
 
 /**
  * Represent a space invader enemy with more power
@@ -38,12 +38,12 @@ public class SpaceInvader extends Enemy{
         // if we have reached the left hand side of the screen and
         // are moving left then request a logic update 
         if ((dx < 0) && (x < 10)) {
-                SpaceInvaderGame.getInstance().updateLogic();
+                Game.getInstance().updateLogic();
         }
         // and vice versa, if we have reached the right hand side of 
         // the screen and are moving right, request a logic update
         if ((dx > 0) && (x > 750)) {
-                SpaceInvaderGame.getInstance().updateLogic();
+                Game.getInstance().updateLogic();
         }
 
         // proceed with normal move
@@ -61,8 +61,8 @@ public class SpaceInvader extends Enemy{
 
         // if we've reached the bottom of the screen then the player
         // dies
-        if (y > 570) {
-            SpaceInvaderGame.getInstance().notifyDeath();
+        if (y > Game.getInstance().getMaxScreenHeight()) {
+            Game.getInstance().notifyDeath();
         }
     }
 	

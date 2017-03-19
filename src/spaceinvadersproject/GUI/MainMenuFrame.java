@@ -243,8 +243,8 @@ public class MainMenuFrame extends javax.swing.JFrame {
                 if(selectedMenuComponent.getText().equals(addChevronSelected(TEXT_START_GAME)))
                 {
                     this.setVisible(false); //just want to make it disapear from the string but we need informations
-                    GameFrame mf = new GameFrame();
-                    mf.setVisible(true);
+                    //TODO GameFrame mf = new GameFrame();
+                    //mf.setVisible(true);
 
                 }
                 else if(selectedMenuComponent.getText().equals(addChevronSelected(TEXT_OPTIONS)))

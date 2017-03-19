@@ -12,11 +12,11 @@ import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import spaceinvadersproject.Game;
 import spaceinvadersproject.Models.Aircrafts.Aircraft;
 import spaceinvadersproject.Models.Aircrafts.OldAircraft;
 import spaceinvadersproject.Models.Enemies.Enemy;
 import spaceinvadersproject.Models.Entity;
-import spaceinvadersproject.SpaceInvaderGame;
 
 /**
  * Represent the player
@@ -76,12 +76,13 @@ public class Player extends Entity{
         // if we're moving left and have reached the left hand side
         // of the screen, don't move
         if ((dx < 0) && (x < 10)) {
-                return;
+            return;
         }
         // if we're moving right and have reached the right hand side
         // of the screen, don't move
-        if ((dx > 0) && (x > 750)) {
-                return;
+        System.out.println("Game.getInstance().getMaxScreenWidth()"+Game.getInstance().getMaxScreenWidth());
+        if ((dx > 0) && (x > Game.getInstance().getMaxScreenWidth())) {
+            return;
         }
 
         super.move(delta);
@@ -96,7 +97,7 @@ public class Player extends Entity{
         // if its an alien, notify the game that the player
         // is dead
         if (other instanceof Enemy) {
-            SpaceInvaderGame.getInstance().notifyDeath();
+            Game.getInstance().notifyDeath();
         }
     }
 

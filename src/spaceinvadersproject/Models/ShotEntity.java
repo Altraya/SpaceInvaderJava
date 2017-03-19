@@ -5,8 +5,8 @@
  */
 package spaceinvadersproject.Models;
 
+import spaceinvadersproject.Game;
 import spaceinvadersproject.Models.Enemies.Enemy;
-import spaceinvadersproject.SpaceInvaderGame;
 
 /**
  *
@@ -16,7 +16,7 @@ public class ShotEntity extends Entity {
     /** The vertical speed at which the players shot moves */
     private double moveSpeed = -300;
     /** The game in which this entity exists */
-    private spaceinvadersproject.SpaceInvaderGame game;
+    private Game game;
     /** True if this shot has been "used", i.e. its hit something */
     private boolean used = false;
 
@@ -30,7 +30,7 @@ public class ShotEntity extends Entity {
     public ShotEntity(String sprite,int x,int y) {
         super(sprite,x,y);
 
-        this.game = SpaceInvaderGame.getInstance();
+        this.game = Game.getInstance();
 
         dy = moveSpeed;
     }
@@ -46,9 +46,8 @@ public class ShotEntity extends Entity {
         super.move(delta);
 
         // if we shot off the screen, remove ourselfs
-
         if (y < -100) {
-            SpaceInvaderGame.getInstance().removeEntity(this);
+            Game.getInstance().removeEntity(this);
         }
     }
 
@@ -70,12 +69,11 @@ public class ShotEntity extends Entity {
         if (other instanceof Enemy) {
             // remove the affected entities
 
-            SpaceInvaderGame.getInstance().removeEntity(this);
-            SpaceInvaderGame.getInstance().removeEntity(other);
+            Game.getInstance().removeEntity(this);
+            Game.getInstance().removeEntity(other);
 
             // notify the game that the alien has been killed
-
-            SpaceInvaderGame.getInstance().notifyEnemyKilled();
+            Game.getInstance().notifyEnemyKilled();
             used = true;
         }
     }
