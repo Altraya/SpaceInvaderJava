@@ -80,7 +80,6 @@ public class Player extends Entity{
         }
         // if we're moving right and have reached the right hand side
         // of the screen, don't move
-        System.out.println("Game.getInstance().getMaxScreenWidth()"+Game.getInstance().getMaxScreenWidth());
         if ((dx > 0) && (x > Game.getInstance().getMaxScreenWidth())) {
             return;
         }
@@ -94,7 +93,7 @@ public class Player extends Entity{
      * @param other The entity with which the ship has collided
      */
     public void collidedWith(Entity other) {
-        // if its an alien, notify the game that the player
+        // if its an enemy, notify the game that the player
         // is dead
         if (other instanceof Enemy) {
             Game.getInstance().notifyDeath();

@@ -64,15 +64,14 @@ public class ShotEntity extends Entity {
             return;
         }
 
-        // if we've hit an alien, kill it!
-
+        // if we've hit an Enemy, kill it!
         if (other instanceof Enemy) {
             // remove the affected entities
 
             Game.getInstance().removeEntity(this);
             Game.getInstance().removeEntity(other);
 
-            // notify the game that the alien has been killed
+            // notify the game that the enemy has been killed
             Game.getInstance().notifyEnemyKilled();
             used = true;
         }

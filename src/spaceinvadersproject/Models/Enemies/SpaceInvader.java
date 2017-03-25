@@ -18,11 +18,11 @@ public class SpaceInvader extends Enemy{
     private double moveSpeed = 75;
 
     /**
-     * Create a new alien entity
+     * Create a new spaceinvader entity
      * 
-     * @param ref The sprite which should be displayed for this alien
-     * @param x The intial x location of this alien
-     * @param y The intial y location of this alient
+     * @param ref The sprite which should be displayed for this spaceinvader
+     * @param x The intial x location of this spaceinvader
+     * @param y The intial y location of this spaceinvader
      */
     public SpaceInvader(String ref,int x,int y) {
         super(ref,x,y);
@@ -30,7 +30,7 @@ public class SpaceInvader extends Enemy{
     }
 
     /**
-     * Request that this alien moved based on time elapsed
+     * Request that this space invader moved based on time elapsed
      * 
      * @param delta The time that has elapsed since last move
      */
@@ -38,12 +38,12 @@ public class SpaceInvader extends Enemy{
         // if we have reached the left hand side of the screen and
         // are moving left then request a logic update 
         if ((dx < 0) && (x < 10)) {
-                Game.getInstance().updateLogic();
+            Game.getInstance().updateLogic();
         }
         // and vice versa, if we have reached the right hand side of 
         // the screen and are moving right, request a logic update
-        if ((dx > 0) && (x > 750)) {
-                Game.getInstance().updateLogic();
+        if ((dx > 0) && (x > Game.getInstance().getMaxScreenWidth())) {
+            Game.getInstance().updateLogic();
         }
 
         // proceed with normal move
@@ -67,7 +67,7 @@ public class SpaceInvader extends Enemy{
     }
 	
     /**
-     * Notification that this alien has collided with another entity
+     * Notification that this spaceinvader has collided with another entity
      * 
      * @param other The other entity
      */
