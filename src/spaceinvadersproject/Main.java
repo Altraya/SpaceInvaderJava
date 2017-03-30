@@ -19,6 +19,9 @@ public class Main {
      */
     public static void main(String[] args) {
         Game g = Game.getInstance();
+        // initialise the entities in our game so there's something
+        // to see at startup
+        g.startGame();
 
         // Start the main game loop, note: this method will not
         // return until the game has finished running. Hence we are

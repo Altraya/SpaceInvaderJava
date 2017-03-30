@@ -11,6 +11,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -153,16 +154,16 @@ public class Game extends Canvas {
 
         // initialise the entities in our game so there's something
         // to see at startup
-        initEntities();
+        //initEntities(); don't load here cause we need to get the isntance on this to call submethod of this function
     }
 
     /**
      * Start a fresh game, this should clear out any old data and
      * create a new set.
      */
-    private void startGame() {
+    public void startGame() {
         // clear out any existing entities and intialise a new set
-        entities.clear();
+        getEntities().clear();
         initEntities();
 
         // blank out any keyboard settings we might currently have
@@ -178,22 +179,16 @@ public class Game extends Canvas {
     private void initEntities() {
         int marginLeft = this.getMaxScreenWidth()/6;
         int marginTop = this.getMaxScreenHeight()/6;
-        int widthSprite = 100;
-        int heightSprite = 73;
-        int maxRow = 5;
-        int maxEnemyByRow = 12;
-        // create the player ship and place it roughly in the center of the screen
-        player = new Player("sprites/defaultPlayer.png",this.getMaxScreenWidth()/2,this.getMaxScreenHeight()-70, "PlayerFirstname", "NamePlayer", "Poney");
-        entities.add(player);
-
-        // create a block of aliens (5 rows, by 12 aliens, spaced evenly)
-        enemyCount = 0;
-        for (int row=0;row<maxRow;row++) {
-            for (int x=0;x<maxEnemyByRow;x++) {
-                Entity spaceInv = new SpaceInvader("sprites/miniSI_pink.png",marginLeft+(x*widthSprite),(marginTop)+row*heightSprite);
-                entities.add(spaceInv);
-                enemyCount++;
-            }
+        
+        try {
+            
+            //load level 1
+            Level firstLevel = new Level(Level.ELevel.SPACE_INVADER_LEVEL, marginLeft, marginTop);
+            enemyCount = firstLevel.getEnemyNumber();
+            System.out.println("Enemy count "+enemyCount);
+                    
+        } catch (InstantiationException | IllegalAccessException ex) {
+            Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
     }
 
@@ -238,16 +233,16 @@ public class Game extends Canvas {
      */
     public void notifyEnemyKilled() {
         // reduce the alient count, if there are none left, the player has won!
-        enemyCount--;
+        setEnemyCount(getEnemyCount() - 1);
 
-        if (enemyCount == 0) {
+        if (getEnemyCount() == 0) {
             notifyWin();
         }
 
         // if there are still some aliens left then they all need to get faster, so
         // speed up all the existing aliens
-        for (int i=0;i<entities.size();i++) {
-            Entity entity = (Entity) entities.get(i);
+        for (int i=0;i<getEntities().size();i++) {
+            Entity entity = (Entity) getEntities().get(i);
 
             if (entity instanceof SpaceInvader) {
                 // speed up by 2%
@@ -269,8 +264,8 @@ public class Game extends Canvas {
 
         // if we waited long enough, create the shot entity, and record the time.
         lastFire = System.currentTimeMillis();
-        ShotEntity shot = new ShotEntity("sprites/shot.gif",player.getX()+10,player.getY()-30);
-        entities.add(shot);
+        ShotEntity shot = new ShotEntity("sprites/shot.gif",getPlayer().getX()+10,getPlayer().getY()-30);
+        getEntities().add(shot);
     }
 
     /**
@@ -303,25 +298,25 @@ public class Game extends Canvas {
 
             // cycle round asking each entity to move itself
             if (!waitingForKeyPress) {
-                for (int i=0;i<entities.size();i++) {
-                    Entity entity = (Entity) entities.get(i);
+                for (int i=0;i<getEntities().size();i++) {
+                    Entity entity = (Entity) getEntities().get(i);
                     entity.move(delta);
                 }
             }
 
             // cycle round drawing all the entities we have in the game
-            for (int i=0;i<entities.size();i++) {
-                Entity entity = (Entity) entities.get(i);
+            for (int i=0;i<getEntities().size();i++) {
+                Entity entity = (Entity) getEntities().get(i);
                 entity.draw(g);
             }
 
             // brute force collisions, compare every entity against
             // every other entity. If any of them collide notify 
             // both entities that the collision has occured
-            for (int p=0;p<entities.size();p++) {
-                for (int s=p+1;s<entities.size();s++) {
-                    Entity me = (Entity) entities.get(p);
-                    Entity him = (Entity) entities.get(s);
+            for (int p=0;p<getEntities().size();p++) {
+                for (int s=p+1;s<getEntities().size();s++) {
+                    Entity me = (Entity) getEntities().get(p);
+                    Entity him = (Entity) getEntities().get(s);
 
                     if (me.collidesWith(him)) {
                         me.collidedWith(him);
@@ -331,15 +326,15 @@ public class Game extends Canvas {
             }
 
             // remove any entity that has been marked for clear up
-            entities.removeAll(removeList);
+            getEntities().removeAll(removeList);
             removeList.clear();
 
             // if a game event has indicated that game logic should
             // be resolved, cycle round every entity requesting that
             // their personal logic should be considered.
             if (logicRequiredThisLoop) {
-                for (int i=0;i<entities.size();i++) {
-                    Entity entity = (Entity) entities.get(i);
+                for (int i=0;i<getEntities().size();i++) {
+                    Entity entity = (Entity) getEntities().get(i);
                     entity.doLogic();
                 }
 
@@ -362,12 +357,12 @@ public class Game extends Canvas {
             // resolve the movement of the ship. First assume the ship 
             // isn't moving. If either cursor key is pressed then
             // update the movement appropraitely
-            player.setHorizontalMovement(0);
+            getPlayer().setHorizontalMovement(0);
 
             if ((leftPressed) && (!rightPressed)) {
-                player.setHorizontalMovement(-moveSpeed);
+                getPlayer().setHorizontalMovement(-moveSpeed);
             } else if ((rightPressed) && (!leftPressed)) {
-                player.setHorizontalMovement(moveSpeed);
+                getPlayer().setHorizontalMovement(moveSpeed);
             }
 
             // if we're pressing fire, attempt to fire
@@ -380,6 +375,48 @@ public class Game extends Canvas {
             // a bad implementation of timer
             try { Thread.sleep(10); } catch (Exception e) {}
         }
+    }
+
+    /**
+     * @return the player
+     */
+    public Player getPlayer() {
+        return player;
+    }
+
+    /**
+     * @param player the player to set
+     */
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    /**
+     * @return the entities
+     */
+    public ArrayList getEntities() {
+        return entities;
+    }
+
+    /**
+     * @param entities the entities to set
+     */
+    public void setEntities(ArrayList entities) {
+        this.entities = entities;
+    }
+
+    /**
+     * @return the enemyCount
+     */
+    public int getEnemyCount() {
+        return enemyCount;
+    }
+
+    /**
+     * @param enemyCount the enemyCount to set
+     */
+    public void setEnemyCount(int enemyCount) {
+        this.enemyCount = enemyCount;
     }
 
     /**
