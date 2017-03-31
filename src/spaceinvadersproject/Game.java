@@ -297,7 +297,7 @@ public class Game extends Canvas {
             }
         }
         
-        if (getEnemyCount() == 0) {
+       /* if (getEnemyCount() == 0) {
             if(currentLevel < maxLevelToReach)
             {
                 // clear out any existing entities and intialise a new set
@@ -332,7 +332,7 @@ public class Game extends Canvas {
                 notifyWin();
             }
             
-        }
+        }*/
 
         
     }
@@ -441,7 +441,39 @@ public class Game extends Canvas {
                         }
                         setEnemyCount(getEnemyCount() -1);
                         if (getEnemyCount() == 0) {
-                            notifyWin();
+                            if(currentLevel < maxLevelToReach)
+                            {
+                                // clear out any existing entities and intialise a new set
+                                getEntities().clear();
+
+                                // blank out any keyboard settings we might currently have
+                                leftPressed = false;
+                                rightPressed = false;
+                                firePressed = false;
+
+                                notifyForNextLevel(); //display information message
+
+                                //then display and create the level
+                                int marginLeft = this.getMaxScreenWidth()/6;
+                                int marginTop = this.getMaxScreenHeight()/6;
+
+                                try {
+                                    System.out.println("Current Level"+currentLevel);
+                                    Level futurLevel = new Level(currentLevel, marginLeft, marginTop);
+                                    enemyCount = futurLevel.getEnemyNumber();
+
+                                } catch (InstantiationException | IllegalAccessException ex) {
+                                    Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+                                } catch (NullPointerException ex)
+                                {
+                                    //the level is not correctly formated, so we just skip it, and notify user win
+                                    notifyWin();
+                                }
+                                currentLevel++;
+
+                            }else{
+                                notifyWin();
+                            }
                         }
                     }
                 }
