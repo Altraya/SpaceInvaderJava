@@ -1,12 +1,5 @@
 package spaceinvadersproject.Models.Audio;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
-import sun.audio.AudioStream;
-
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
 

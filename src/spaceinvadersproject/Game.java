@@ -289,7 +289,7 @@ public class Game extends Canvas {
         getEntities().add(shot);
         getEntities().add(shot2);
     }
-    
+
     /**
      * The main game loop. This loop is running during all game
      * play as is responsible for the following activities:
@@ -353,6 +353,15 @@ public class Game extends Canvas {
                 // Check how many enemies we are deleting and check for win
                 for(Object o : removeList) {
                     if( o instanceof Enemy) {
+                        try {
+                            Clip clip = AudioSystem.getClip();
+                            AudioInputStream ais = AudioSystem.getAudioInputStream(this.getClass().getClassLoader().getResource("audios/explosion.wav"));
+                            clip.open(ais);
+                            clip.start();
+
+                        } catch (Exception e) {
+                            //e.printStackTrace();
+                        }
                         setEnemyCount(getEnemyCount() -1);
                         if (getEnemyCount() == 0) {
                             notifyWin();
