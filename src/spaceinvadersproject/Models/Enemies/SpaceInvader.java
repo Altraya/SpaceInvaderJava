@@ -37,12 +37,12 @@ public class SpaceInvader extends Enemy{
     public void move(long delta) {
         // if we have reached the left hand side of the screen and
         // are moving left then request a logic update 
-        if ((dx < 0) && (x < 10)) {
+        if ((dx < 0) && (x < 0)) {
             Game.getInstance().updateLogic();
         }
         // and vice versa, if we have reached the right hand side of 
         // the screen and are moving right, request a logic update
-        if ((dx > 0) && (x > Game.getInstance().getMaxScreenWidth())) {
+        if ((dx > 0) && (x + this.getSprite().getWidth() > Game.getInstance().getMaxScreenWidth())) {
             Game.getInstance().updateLogic();
         }
 

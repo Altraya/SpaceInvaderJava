@@ -62,13 +62,15 @@ public class Level {
             int maxEnemyByRow = ini.getInt(keyLevel, "maxEnemyByRow", 12);
 
             String picturePlayerUrl = ini.getString(keyLevel+"_Player", "picture", "sprites/player.png");
+            String audioPlayerUrl = ini.getString(keyLevel+"_Player", "audio", "audios/shoot.wav");
             String playerFirstName = ini.getString(keyLevel+"_Player", "firstName", "DefaultPlayerFirstName");
             String playerLastName = ini.getString(keyLevel+"_Player", "lastName", "DefaultPlayerLastName");
             String playerNickName = ini.getString(keyLevel+"_Player", "nickname", "DefaultPlayerNickName");
             int widthSpritePlayer = ini.getInt(keyLevel+"_Player", "widthSprite", 100);
             int heightSpritePlayer = ini.getInt(keyLevel+"_Player", "heightSprite", 100);
             // create the player ship and place it roughly in the center of the screen
-            Game.getInstance().setPlayer(new Player(picturePlayerUrl,Game.getInstance().getMaxScreenWidth()/2,Game.getInstance().getMaxScreenHeight()-(heightSpritePlayer*2), playerFirstName, playerLastName, playerNickName));
+            Game.getInstance().setPlayer(new Player(picturePlayerUrl, audioPlayerUrl, Game.getInstance().getMaxScreenWidth()/2,Game.getInstance().getMaxScreenHeight()-(heightSpritePlayer*2), playerFirstName, playerLastName, playerNickName));
+            Game.getInstance().getPlayer().setX(Game.getInstance().getMaxScreenWidth() / 2 - (Game.getInstance().getPlayer().getSprite().getWidth() / 2) );
             Game.getInstance().getEntities().add(Game.getInstance().getPlayer());
             
             // create a block of enemy (5 rows, by 12 enemy, spaced evenly)

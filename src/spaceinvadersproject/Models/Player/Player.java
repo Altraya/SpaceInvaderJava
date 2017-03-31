@@ -15,6 +15,8 @@ import javax.imageio.ImageIO;
 import spaceinvadersproject.Game;
 import spaceinvadersproject.Models.Aircrafts.Aircraft;
 import spaceinvadersproject.Models.Aircrafts.OldAircraft;
+import spaceinvadersproject.Models.Audio.Audio;
+import spaceinvadersproject.Models.Audio.AudioStore;
 import spaceinvadersproject.Models.Enemies.Enemy;
 import spaceinvadersproject.Models.Entity;
 
@@ -26,6 +28,7 @@ public class Player extends Entity{
     private String name;
     private String firstname;
     private String nickname;
+    private Audio audio;
     
     protected Aircraft _aircraft;
         
@@ -38,7 +41,12 @@ public class Player extends Entity{
         this.firstname = format.get("firstname");
         this.nickname = format.get("nickname");
         this._aircraft = new OldAircraft(10, 15);
+        this.audio = null;
+    }
 
+    public Player(String picturePath,String audio, int x,int y, String name, String firstname, String nickname) {
+        this(picturePath, x, y, name, firstname, nickname);
+        this.audio = AudioStore.get().getAudio(audio);
     }
     
     private static Hashtable<String, String> formateFirstnameAndName(String name, String firstname, String nickname)
@@ -75,12 +83,12 @@ public class Player extends Entity{
     public void move(long delta) {
         // if we're moving left and have reached the left hand side
         // of the screen, don't move
-        if ((dx < 0) && (x < 10)) {
+        if ((dx < 0) && (x < 0)) {
             return;
         }
         // if we're moving right and have reached the right hand side
         // of the screen, don't move
-        if ((dx > 0) && (x > Game.getInstance().getMaxScreenWidth())) {
+        if ((dx > 0) && (x + + this.getSprite().getWidth() > Game.getInstance().getMaxScreenWidth())) {
             return;
         }
 
@@ -99,5 +107,10 @@ public class Player extends Entity{
             Game.getInstance().notifyDeath();
         }
     }
+
+    public Audio getAudio() {
+        return audio;
+    }
+
 
 }

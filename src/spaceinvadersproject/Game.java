@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import javax.sound.sampled.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import spaceinvadersproject.Helpers.IniFile;
@@ -21,6 +22,7 @@ import spaceinvadersproject.Models.Enemies.SpaceInvader;
 import spaceinvadersproject.Models.Entity;
 import spaceinvadersproject.Models.Player.Player;
 import spaceinvadersproject.Models.ShotEntity;
+import sun.audio.AudioPlayer;
 
 /**
  * The main hook of our game. This class with both act as a manager
@@ -66,7 +68,7 @@ public class Game extends Canvas {
     /** The entity representing the player */
     private Player player;
     /** The speed at which the player's ship should move (pixels/sec) */
-    private double moveSpeed = 300;
+    private double moveSpeed = 600;
     /** The time at which last fired a shot */
     private long lastFire = 0;
     // The interval between our players shot (ms)
@@ -300,8 +302,37 @@ public class Game extends Canvas {
 
         // if we waited long enough, create the shot entity, and record the time.
         lastFire = System.currentTimeMillis();
-        ShotEntity shot = new ShotEntity("sprites/shot.gif",getPlayer().getX()+10,getPlayer().getY()-30);
+        //playSound(getPlayer().getAudio().getAudioStream());
+        try {
+            Clip clip = AudioSystem.getClip();
+            AudioInputStream ais = AudioSystem.getAudioInputStream(getPlayer().getAudio().getAudioStream());
+            clip.open(ais);
+            clip.start();
+
+        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        }
+
+        ShotEntity shot = new ShotEntity("sprites/shot.gif",getPlayer().getX()+10,getPlayer().getY() + 10);
+        ShotEntity shot2 = new ShotEntity("sprites/shot.gif",(getPlayer().getX() + getPlayer().getSprite().getWidth()) - 20,getPlayer().getY() + 10);
         getEntities().add(shot);
+        getEntities().add(shot2);
+    }
+
+    public static synchronized void playSound(AudioInputStream audio) {
+        new Thread(new Runnable() {
+            // The wrapper thread is unnecessary, unless it blocks on the
+            // Clip finishing; see comments.
+            public void run() {
+                try {
+                    Clip clip = AudioSystem.getClip();
+                    clip.open(audio);
+                    clip.start();
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
+            }
+        }).start();
     }
 
     /**

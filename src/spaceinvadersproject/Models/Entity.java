@@ -122,6 +122,10 @@ public abstract class Entity {
         return (int) x;
     }
 
+    public void setX(double x) {
+        this.x = x;
+    }
+
     /**
      * Get the y location of this entity
      * 
@@ -149,4 +153,8 @@ public abstract class Entity {
      * @param other The entity with which this entity collided.
      */
     public abstract void collidedWith(Entity other);
+
+    public Sprite getSprite() {
+        return sprite;
+    }
 }
