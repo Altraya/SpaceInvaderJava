@@ -4,7 +4,6 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -13,7 +12,6 @@ import java.awt.image.BufferStrategy;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -22,11 +20,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import spaceinvadersproject.Models.Enemies.Enemy;
+import spaceinvadersproject.Helpers.IniFile;
 import spaceinvadersproject.Models.Enemies.SpaceInvader;
 import spaceinvadersproject.Models.Entity;
 import spaceinvadersproject.Models.Player.Player;
 import spaceinvadersproject.Models.ShotEntity;
-import sun.audio.AudioPlayer;
 
 /**
  * The main hook of our game. This class with both act as a manager
@@ -43,6 +41,20 @@ import sun.audio.AudioPlayer;
  * 
  */
 public class Game extends Canvas {
+
+    /**
+     * @return the currentLevel
+     */
+    public int getCurrentLevel() {
+        return currentLevel;
+    }
+
+    /**
+     * @param currentLevel the currentLevel to set
+     */
+    public void setCurrentLevel(int currentLevel) {
+        this.currentLevel = currentLevel;
+    }
     public enum ECote {
         LEFT,
         RIGHT
@@ -81,6 +93,9 @@ public class Game extends Canvas {
 
     private int maxScreenHeight = 0;
     private int maxScreenWidth = 0;
+    
+    private int currentLevel = 0;
+    private int maxLevelToReach = 0;
    
     // Singleton
     private static Game INSTANCE = null;
@@ -191,13 +206,30 @@ public class Game extends Canvas {
         try {
             
             //load level 1
-            Level firstLevel = new Level(Level.ELevel.SPACE_INVADER_LEVEL, marginLeft, marginTop);
+            Level firstLevel = new Level(0, marginLeft, marginTop);
             enemyCount = firstLevel.getEnemyNumber();
-            System.out.println("Enemy count "+enemyCount);
+            currentLevel = 1;
+            
+            fillMaxLevelToReachFromIniFile("Levels.ini");
+            
                     
         } catch (InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+    }
+    
+    private void fillMaxLevelToReachFromIniFile(String path)
+    {
+        IniFile ini;
+        maxLevelToReach = 1;
+        try {
+            ini = new IniFile(path);
+            maxLevelToReach = ini.getInt("Global", "nbLevel", 1);
+
+        } catch (IOException ex) {
+            Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+           
     }
 
     /**
@@ -223,19 +255,24 @@ public class Game extends Canvas {
      * Notification that the player has died. 
      */
     public void notifyDeath() {
-        message = "Oh no! They got you, try again?";
+        message = "T'es vraiment mauvais donc tu as perdu (comme Félix), est-ce que tu veux relancer un échec ?";
         waitingForKeyPress = true;
     }
 
     /**
-     * Notification that the player has won since all the aliens
+     * Notification that the player has won since all the enemies
      * are dead.
      */
     public void notifyWin() {
-        message = "Well done! You Win!";
+        message = "T'as vraiment eu de la chance, mais t'as gagné, GG ...";
         waitingForKeyPress = true;
     }
-
+    
+    public void notifyForNextLevel() {
+        message = "Encore prêt pour un petit niveau ? Allez, c'est parti !";
+        waitingForKeyPress = true;
+    }
+    
     /**
      * Notification that an enemy has been killed
      */
@@ -250,6 +287,7 @@ public class Game extends Canvas {
 
         // if there are still some aliens left then they all need to get faster, so
         // speed up all the existing aliens
+
         for (int i=0;i<getEntities().size();i++) {
             Entity entity = (Entity) getEntities().get(i);
 
@@ -258,6 +296,45 @@ public class Game extends Canvas {
                 entity.setHorizontalMovement(entity.getHorizontalMovement() * 1.02);
             }
         }
+        
+        if (getEnemyCount() == 0) {
+            if(currentLevel < maxLevelToReach)
+            {
+                // clear out any existing entities and intialise a new set
+                getEntities().clear();
+                
+                // blank out any keyboard settings we might currently have
+                leftPressed = false;
+                rightPressed = false;
+                firePressed = false;
+                
+                notifyForNextLevel(); //display information message
+
+                //then display and create the level
+                int marginLeft = this.getMaxScreenWidth()/6;
+                int marginTop = this.getMaxScreenHeight()/6;
+
+                try {
+                    System.out.println("Current Level"+currentLevel);
+                    Level futurLevel = new Level(currentLevel, marginLeft, marginTop);
+                    enemyCount = futurLevel.getEnemyNumber();
+
+                } catch (InstantiationException | IllegalAccessException ex) {
+                    Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+                } catch (NullPointerException ex)
+                {
+                    //the level is not correctly formated, so we just skip it, and notify user win
+                    notifyWin();
+                }
+                currentLevel++;
+
+            }else{
+                notifyWin();
+            }
+            
+        }
+
+        
     }
 
     /**
@@ -280,8 +357,8 @@ public class Game extends Canvas {
             clip.open(ais);
             clip.start();
 
-        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
-            e.printStackTrace();
+        } catch(Exception e) {
+            //e.printStackTrace();
         }
 
         ShotEntity shot = new ShotEntity("sprites/shot.gif",getPlayer().getX()+10,getPlayer().getY() + 10);
@@ -388,8 +465,8 @@ public class Game extends Canvas {
             // current message 
             if (waitingForKeyPress) {
                 g.setColor(Color.white);
-                g.drawString(message,(this.getMaxScreenWidth()-g.getFontMetrics().stringWidth(message))/2,250);
-                g.drawString("Press any key",(this.getMaxScreenWidth()-g.getFontMetrics().stringWidth("Press any key"))/2,300);
+                g.drawString(message,(this.getMaxScreenWidth()-g.getFontMetrics().stringWidth(message))/2,this.getMaxScreenHeight()/2);
+                g.drawString("Appuie sur une touche pour lancer la partie",(this.getMaxScreenWidth()-g.getFontMetrics().stringWidth("Appuie sur une touche pour lancer la partie"))/2,this.getMaxScreenHeight()/2+50);
             }
 
             // finally, we've completed drawing so clear up the graphics
@@ -460,6 +537,20 @@ public class Game extends Canvas {
      */
     public void setEnemyCount(int enemyCount) {
         this.enemyCount = enemyCount;
+    }
+
+    /**
+     * @return the maxLevelToReach
+     */
+    public int getMaxLevelToReach() {
+        return maxLevelToReach;
+    }
+
+    /**
+     * @param maxLevelToReach the maxLevelToReach to set
+     */
+    public void setMaxLevelToReach(int maxLevelToReach) {
+        this.maxLevelToReach = maxLevelToReach;
     }
 
     /**
@@ -545,7 +636,10 @@ public class Game extends Canvas {
                     // event we can mark it as such and start 
                     // our new game
                     waitingForKeyPress = false;
-                    startGame();
+                    if(currentLevel <= 0)
+                    {
+                        startGame();
+                    }//else already handle in enemy killed notification
                     pressCount = 0;
                 } else {
                     pressCount++;

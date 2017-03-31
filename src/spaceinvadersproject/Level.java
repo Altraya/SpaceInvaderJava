@@ -23,21 +23,17 @@ import spaceinvadersproject.Models.Player.Player;
  */
 public class Level {
     
-    enum ELevel {
-        SPACE_INVADER_LEVEL,
-        SPACE_LEVEL
-    }
-    private ELevel _currentLevelName;
+    private int _currentLevelValue;
     
     private int enemyNumber;
     
-    public Level(String path, ELevel number, int marginLeft, int marginTop) throws InstantiationException, IllegalAccessException
+    public Level(String path, int number, int marginLeft, int marginTop) throws InstantiationException, IllegalAccessException
     {
-        _currentLevelName = number;
+        _currentLevelValue = number;
         loadLevelFromIni(path, marginLeft, marginTop);
     } 
     
-    public Level(ELevel number, int marginLeft, int marginTop) throws InstantiationException, IllegalAccessException
+    public Level(int number, int marginLeft, int marginTop) throws InstantiationException, IllegalAccessException
     {
         this("Levels.ini", number, marginLeft, marginTop);
     }
@@ -57,7 +53,7 @@ public class Level {
         try {
             ini = new IniFile(path);
 
-            String keyLevel = "Level_"+_currentLevelName;
+            String keyLevel = "Level_"+_currentLevelValue;
             
             int nbEnemies = ini.getInt(keyLevel, "nbEnemies", 0);
             int widthSprite = ini.getInt(keyLevel, "widthSprite", 100);

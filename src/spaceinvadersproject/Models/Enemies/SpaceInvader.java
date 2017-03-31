@@ -52,7 +52,7 @@ public class SpaceInvader extends Enemy{
     }
 
     /**
-     * Update the game logic related to aliens
+     * Update the game logic related to spaceinvaders
      */
     public void doLogic() {
         // swap over horizontal movement and move down the
