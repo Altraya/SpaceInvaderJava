@@ -265,6 +265,7 @@ public class Game extends Canvas {
     public void notifyWin() {
         message = "T'as vraiment eu de la chance, mais t'as gagné, GG ...";
         waitingForKeyPress = true;
+        gameRunning = false;
     }
     
     public void notifyForNextLevel() {
@@ -308,7 +309,6 @@ public class Game extends Canvas {
                 int marginTop = this.getMaxScreenHeight()/6;
 
                 try {
-                    System.out.println("Current Level"+currentLevel);
                     Level futurLevel = new Level(currentLevel, marginLeft, marginTop);
                     enemyCount = futurLevel.getEnemyNumber();
 
