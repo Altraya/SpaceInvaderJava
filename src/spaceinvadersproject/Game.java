@@ -12,11 +12,16 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.sound.sampled.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import spaceinvadersproject.Models.Enemies.Enemy;
 import spaceinvadersproject.Models.Enemies.SpaceInvader;
 import spaceinvadersproject.Models.Entity;
 import spaceinvadersproject.Models.Player.Player;
@@ -49,7 +54,7 @@ public class Game extends Canvas {
     /** The list of all the entities that exist in our game */
     private ArrayList entities = new ArrayList();
     /** The list of entities that need to be removed from the game this loop */
-    private ArrayList removeList = new ArrayList();
+    private Set removeList = new HashSet();
     /** The entity representing the player */
     private Player player;
     /** The speed at which the player's ship should move (pixels/sec) */
@@ -236,11 +241,12 @@ public class Game extends Canvas {
      */
     public void notifyEnemyKilled() {
         // reduce the alient count, if there are none left, the player has won!
-        setEnemyCount(getEnemyCount() - 1);
-
+        // Move this in the game loop to avoid bug of enemy count
+        /*setEnemyCount(getEnemyCount() - 1);
+        System.out.println("ENEMY : " + getEnemyCount());
         if (getEnemyCount() == 0) {
             notifyWin();
-        }
+        }*/
 
         // if there are still some aliens left then they all need to get faster, so
         // speed up all the existing aliens
@@ -283,23 +289,7 @@ public class Game extends Canvas {
         getEntities().add(shot);
         getEntities().add(shot2);
     }
-
-    public static synchronized void playSound(AudioInputStream audio) {
-        new Thread(new Runnable() {
-            // The wrapper thread is unnecessary, unless it blocks on the
-            // Clip finishing; see comments.
-            public void run() {
-                try {
-                    Clip clip = AudioSystem.getClip();
-                    clip.open(audio);
-                    clip.start();
-                } catch (Exception e) {
-                    System.err.println(e.getMessage());
-                }
-            }
-        }).start();
-    }
-
+    
     /**
      * The main game loop. This loop is running during all game
      * play as is responsible for the following activities:
@@ -358,8 +348,20 @@ public class Game extends Canvas {
             }
 
             // remove any entity that has been marked for clear up
-            getEntities().removeAll(removeList);
-            removeList.clear();
+            if(removeList.size() > 0) {
+                getEntities().removeAll(removeList);
+                // Check how many enemies we are deleting and check for win
+                for(Object o : removeList) {
+                    if( o instanceof Enemy) {
+                        setEnemyCount(getEnemyCount() -1);
+                        if (getEnemyCount() == 0) {
+                            notifyWin();
+                        }
+                    }
+                }
+                removeList.clear();
+            }
+
 
             // if a game event has indicated that game logic should
             // be resolved, cycle round every entity requesting that

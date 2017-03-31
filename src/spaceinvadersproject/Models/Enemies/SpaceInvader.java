@@ -7,6 +7,7 @@ package spaceinvadersproject.Models.Enemies;
 
 import spaceinvadersproject.Game;
 import spaceinvadersproject.Models.Entity;
+import spaceinvadersproject.Models.ShotEntity;
 
 /**
  * Represent a space invader enemy with more power
@@ -73,7 +74,6 @@ public class SpaceInvader extends Enemy{
      */
     public void collidedWith(Entity other) {
         // collisions with aliens are handled elsewhere
-
     }
 
 }
