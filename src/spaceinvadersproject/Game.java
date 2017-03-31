@@ -12,6 +12,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javax.sound.sampled.*;
@@ -265,7 +266,12 @@ public class Game extends Canvas {
         message = "T'as vraiment eu de la chance, mais t'as gagné, GG ...";
         waitingForKeyPress = true;
     }
-
+    
+    public void notifyForNextLevel() {
+        message = "Encore prêt pour un petit niveau ? Allez, c'est parti !";
+        waitingForKeyPress = true;
+    }
+    
     /**
      * Notification that an enemy has been killed
      */
@@ -273,12 +279,8 @@ public class Game extends Canvas {
         // reduce the alient count, if there are none left, the player has won!
         setEnemyCount(getEnemyCount() - 1);
 
-        if (getEnemyCount() == 0) {
-            notifyWin();
-        }
-
-        // if there are still some aliens left then they all need to get faster, so
-        // speed up all the existing aliens
+        // if there are still some enemies left then they all need to get faster, so
+        // speed up all the existing enemies
         for (int i=0;i<getEntities().size();i++) {
             Entity entity = (Entity) getEntities().get(i);
 
@@ -287,6 +289,45 @@ public class Game extends Canvas {
                 entity.setHorizontalMovement(entity.getHorizontalMovement() * 1.02);
             }
         }
+        
+        if (getEnemyCount() == 0) {
+            if(currentLevel < maxLevelToReach)
+            {
+                // clear out any existing entities and intialise a new set
+                getEntities().clear();
+                
+                // blank out any keyboard settings we might currently have
+                leftPressed = false;
+                rightPressed = false;
+                firePressed = false;
+                
+                notifyForNextLevel(); //display information message
+
+                //then display and create the level
+                int marginLeft = this.getMaxScreenWidth()/6;
+                int marginTop = this.getMaxScreenHeight()/6;
+
+                try {
+                    System.out.println("Current Level"+currentLevel);
+                    Level futurLevel = new Level(currentLevel, marginLeft, marginTop);
+                    enemyCount = futurLevel.getEnemyNumber();
+
+                } catch (InstantiationException | IllegalAccessException ex) {
+                    Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+                } catch (NullPointerException ex)
+                {
+                    //the level is not correctly formated, so we just skip it, and notify user win
+                    notifyWin();
+                }
+                currentLevel++;
+
+            }else{
+                notifyWin();
+            }
+            
+        }
+
+        
     }
 
     /**
@@ -309,30 +350,14 @@ public class Game extends Canvas {
             clip.open(ais);
             clip.start();
 
-        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
-            e.printStackTrace();
+        } catch(Exception e) {
+            //e.printStackTrace();
         }
 
         ShotEntity shot = new ShotEntity("sprites/shot.gif",getPlayer().getX()+10,getPlayer().getY() + 10);
         ShotEntity shot2 = new ShotEntity("sprites/shot.gif",(getPlayer().getX() + getPlayer().getSprite().getWidth()) - 20,getPlayer().getY() + 10);
         getEntities().add(shot);
         getEntities().add(shot2);
-    }
-
-    public static synchronized void playSound(AudioInputStream audio) {
-        new Thread(new Runnable() {
-            // The wrapper thread is unnecessary, unless it blocks on the
-            // Clip finishing; see comments.
-            public void run() {
-                try {
-                    Clip clip = AudioSystem.getClip();
-                    clip.open(audio);
-                    clip.start();
-                } catch (Exception e) {
-                    System.err.println(e.getMessage());
-                }
-            }
-        }).start();
     }
 
     /**
@@ -583,7 +608,10 @@ public class Game extends Canvas {
                     // event we can mark it as such and start 
                     // our new game
                     waitingForKeyPress = false;
-                    startGame();
+                    if(currentLevel <= 0)
+                    {
+                        startGame();
+                    }//else already handle in enemy killed notification
                     pressCount = 0;
                 } else {
                     pressCount++;
